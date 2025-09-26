@@ -2,7 +2,7 @@ function withValidProperties(
   properties: Record<string, undefined | string | string[]>,
 ) {
   return Object.fromEntries(
-    Object.entries(properties).filter(([key, value]) => {
+    Object.entries(properties).filter(([_key, value]) => {
       if (Array.isArray(value)) {
         return value.length > 0;
       }
