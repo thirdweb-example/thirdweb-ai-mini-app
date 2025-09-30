@@ -2,17 +2,14 @@
 import { ReactNode } from "react";
 import { base } from "wagmi/chains";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
+import { ThirdwebProvider } from "thirdweb/react";
+
 
 export function RootProvider({ children }: { children: ReactNode }) {
-  const apiKey = process.env.NEXT_PUBLIC_ONCHAIN_KIT_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("NEXT_PUBLIC_ONCHAIN_KIT_API_KEY environment variable is required");
-  }
-
   return (
-    <OnchainKitProvider
-      apiKey={apiKey}
+    <ThirdwebProvider>
+      <OnchainKitProvider
+      apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY || ""}
       chain={base}
       config={{
         appearance: {
@@ -31,5 +28,6 @@ export function RootProvider({ children }: { children: ReactNode }) {
     >
       {children}
     </OnchainKitProvider>
+    </ThirdwebProvider>
   );
 }

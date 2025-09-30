@@ -116,6 +116,15 @@ a {
   }
 }
 
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 4px;

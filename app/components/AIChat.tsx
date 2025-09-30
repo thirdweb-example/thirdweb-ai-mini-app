@@ -16,6 +16,22 @@ import {
   Box,
 } from "@mantine/core";
 import { IconSend, IconRobot, IconUser, IconRefresh } from "@tabler/icons-react";
+import { ConnectButton, useActiveAccount } from "thirdweb/react";
+import { createWallet, inAppWallet } from "thirdweb/wallets";
+import { createThirdwebClient } from "thirdweb";
+
+// Thirdweb client configuration
+const client = createThirdwebClient({
+  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "your-client-id",
+});
+
+// Wallet configuration
+const wallets = [
+  inAppWallet(),
+  createWallet("io.metamask"),
+  createWallet("com.coinbase.wallet"),
+  createWallet("me.rainbow"),
+];
 
 interface Message {
   id: string;
@@ -26,6 +42,7 @@ interface Message {
 }
 
 export function AIChat() {
+  const account = useActiveAccount();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -162,6 +179,134 @@ export function AIChat() {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
+  // Show connection screen if no wallet is connected
+  if (!account) {
+    return (
+      <Box style={{ 
+        height: "100%", 
+        display: "flex", 
+        flexDirection: "column", 
+        background: "#000000",
+        position: "relative",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem"
+      }}>
+        {/* Connection Required Screen */}
+        <Box style={{
+          textAlign: "center",
+          maxWidth: "600px",
+          padding: "4rem 3rem",
+          background: "linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%)",
+          borderRadius: "32px",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+          backdropFilter: "blur(20px)",
+          position: "relative",
+          overflow: "hidden"
+        }}>
+          {/* Animated background gradient */}
+          <Box style={{
+            position: "absolute",
+            top: "-50%",
+            left: "-50%",
+            width: "200%",
+            height: "200%",
+            background: "conic-gradient(from 0deg, transparent, rgba(138, 43, 226, 0.1), transparent, rgba(75, 0, 130, 0.1), transparent)",
+            animation: "rotate 20s linear infinite",
+            zIndex: 0
+          }} />
+          
+          {/* Content */}
+          <Box style={{ position: "relative", zIndex: 1 }}>
+            {/* AI Robot Icon with enhanced styling */}
+            <Box style={{
+              width: "100px",
+              height: "100px",
+              background: "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "3px solid rgba(138, 43, 226, 0.3)",
+              margin: "0 auto 2.5rem auto",
+              boxShadow: "0 20px 40px rgba(138, 43, 226, 0.2), 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+              position: "relative",
+              overflow: "hidden"
+            }}>
+              <IconRobot size={50} color="#8A2BE2" />
+              {/* Shine effect */}
+              <Box style={{
+                position: "absolute",
+                top: "-50%",
+                left: "-50%",
+                width: "200%",
+                height: "200%",
+                background: "linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent)",
+                animation: "shimmer 3s infinite"
+              }} />
+            </Box>
+
+            <Text fw={800} size="2rem" c="white" mb="md" style={{ 
+              background: "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              letterSpacing: "-0.02em"
+            }}>
+              Welcome to AI Assistant
+            </Text>
+            
+            <Text size="lg" c="#cccccc" mb="xl" style={{ 
+              lineHeight: 1.7,
+              fontWeight: 400,
+              maxWidth: "480px",
+              margin: "0 auto 3rem auto"
+            }}>
+              Connect your wallet to unlock the power of AI-driven Web3 assistance. 
+              Get help with smart contracts, DeFi strategies, and blockchain development.
+            </Text>
+
+            <ConnectButton 
+              client={client}
+              wallets={wallets}
+              theme="dark"
+              connectButton={{
+                label: "Connect Wallet",
+                style: {
+                  background: "linear-gradient(135deg, #8A2BE2 0%, #4B0082 50%, #8A2BE2 100%)",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "20px",
+                  fontWeight: 700,
+                  padding: "20px 40px",
+                  fontSize: "18px",
+                  height: "64px",
+                  minWidth: "240px",
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  boxShadow: "0 12px 40px rgba(138, 43, 226, 0.4), 0 6px 20px rgba(0, 0, 0, 0.2)",
+                  position: "relative",
+                  overflow: "hidden",
+                  textTransform: "none",
+                  letterSpacing: "0.5px"
+                }
+              }}
+              connectModal={{
+                size: "compact",
+                title: "Connect to AI Assistant",
+                titleIcon: "",
+                showThirdwebBranding: false,
+                
+              }}
+            />
+
+           
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box style={{ 
       height: "100%", 
@@ -170,6 +315,70 @@ export function AIChat() {
       background: "#000000",
       position: "relative"
     }}>
+      {/* Connected Wallet Header */}
+      <Box p="lg" style={{ 
+        borderBottom: "1px solid rgba(138, 43, 226, 0.2)", 
+        background: "linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%)",
+        backdropFilter: "blur(20px)",
+        position: "relative",
+        overflow: "hidden"
+      }}>
+        {/* Subtle animated background */}
+        <Box style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "1px",
+          background: "linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.5), transparent)",
+          animation: "shimmer 3s infinite"
+        }} />
+        
+        <Group gap="md">
+          {/* Enhanced AI Robot Icon */}
+          <Box style={{
+            width: "48px",
+            height: "48px",
+            background: "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "2px solid rgba(138, 43, 226, 0.3)",
+            boxShadow: "0 8px 24px rgba(138, 43, 226, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+            position: "relative",
+            overflow: "hidden"
+          }}>
+            <IconRobot size={24} color="#8A2BE2" />
+            {/* Subtle shine effect */}
+            <Box style={{
+              position: "absolute",
+              top: "-50%",
+              left: "-50%",
+              width: "200%",
+              height: "200%",
+              background: "linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent)",
+              animation: "shimmer 4s infinite"
+            }} />
+          </Box>
+          
+          <div>
+            <Text fw={700} size="lg" c="white" style={{ 
+              background: "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              letterSpacing: "-0.01em"
+            }}>
+              AI Assistant
+            </Text>
+            <Text size="sm" c="#888888" style={{ fontWeight: 500 }}>
+              Connected: {account.address.slice(0, 6)}...{account.address.slice(-4)}
+            </Text>
+          </div>
+        </Group>
+      </Box>
+
       {/* Hidden header for desktop */}
       <Box p="sm" style={{ borderBottom: "1px solid #333333", display: "none" }}>
         <Group justify="space-between" align="center">
